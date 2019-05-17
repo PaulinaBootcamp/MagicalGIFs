@@ -1,0 +1,28 @@
+body {
+    background-image: url('../images/Castle.jpg');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    font-family: 'Prompt', sans-serif;
+}
+
+.magic {
+    font-family: 'Playball', cursive;
+    color: white;
+}
+
+.btn {
+    background-color: goldenrod;
+    color: white;
+    font-family: 'EB Garamond', serif;
+}
+
+#add-selection {
+    background-color: purple;
+    border-radius: 10px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.45);
+    padding: 25px;
+    border-radius: 25px;
+}

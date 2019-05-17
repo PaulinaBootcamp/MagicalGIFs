@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Magical GIFs</title>
+
+    <!-- css -->
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
+    <!-- Bootstrap File -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Playball" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container" style="margin-top: 20px">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="magic">Magical GIFs are just a button click away!</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div id="arrayDisplayButtons"></div>
+            </div>
+            <div class="col-md-4">
+                <div>
+
+                    <form id="userForm">
+                        <label for="user-input" class="magic addYourOwn">
+                            <h4>Enter your own category below:</h4>
+                        </label>
+                        <input type="text" id="user-input"><br>
+
+                        <!-- Button triggers new movie to be added -->
+                        <input id="add-selection" type="submit" class="btn" style="margin-top: 10px"
+                            value="Add new button to selection">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+
+                <div id="gifResult">
+
+                </div>
+            </div>
+            <div class="col-md-4">
+
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        var searchWords = ["Lion King", "Aladdin", "Pocahontas", "Beauty and the Beast", "Peter Pan", "Tangled", "10 Dalmatians", "Bambi", "Cinderella"];
+
+        function createButtons() {
+            $("#arrayDisplayButtons").empty();
+            for (var i = 0; i < searchWords.length; i++) {
+
+                // Then dynamicaly generates buttons for each movie in the array
+                // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+                var a = $("<button>");
+                // Adds a class of movie to our button
+                a.addClass("searchWords");
+                a.addClass("btn");
+                // Added a data-attribute
+                a.attr("data-name", searchWords[i]);
+                a.css("margin", "5px")
+                // Provided the initial button text
+                a.text(searchWords[i]);
+                // Added the button to the buttons-view div
+                $("#arrayDisplayButtons").append(a);
+            }
+        };
+        createButtons();
+
+
+        $("#add-selection").on("click", function (event) {
+            event.preventDefault();
+
+            // This line grabs the input from the textbox
+            var addSelection = $("#user-input").val().trim();
+
+            // The movie from the textbox is then added to our array
+            searchWords.push(addSelection);
+            // Calling renderButtons which handles the processing of our movie array
+            createButtons();
+
+        });
+
+        function displayGifInfo() {
+
+            $("#gifResult").empty()
+            var gifChoice = $(this).attr("data-name");
+
+            var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=dDdPdREPTQHbl93EgHVzZBU9C1zVNxSj&q=" + gifChoice + "&limit=10&offset=0&rating=Y&lang=en";
+
+            // Creates AJAX call for the specific movie button being clicked
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (response) {
+
+                for (var i = 0; i < response.data.length; i++) {
+                    $("#gifResult").append(`
+                    <div style="float: left">
+                        <img style="margin: 5px" 
+                    src="${response.data[i].images.fixed_height_small_still.url}"
+                    data-still="${response.data[i].images.fixed_height_small_still.url}"
+                    data-animate="${response.data[i].images.fixed_height_small.url}" 
+                    data-state="still" 
+                    class="gif"
+                    >                    
+                    <p style="color:purple">Rating: ${response.data[i].rating}</p>
+                    </div>
+                    `);
+
+                }
+                $(".gif").on("click", function () {
+
+                    var state = $(this).attr("data-state");
+                    console.log(state);
+
+
+                    if (state === "still") {
+
+                        var animateSrc = $(this).attr("data-animate");
+                        $(this).attr("src", animateSrc);
+                        $(this).attr("data-state", "animate");
+                    } else {
+                        var stillSrc = $(this).attr("data-still");
+                        $(this).attr("src", stillSrc);
+                        $(this).attr("data-state", "still");
+                    };
+
+                }
+                );
+            });
+
+        };
+
+        $(document).on("click", ".searchWords", displayGifInfo);
+        console.log("ok");
+
+        //stop and play gifs
+
+
+    </script>
+</body>
+
+</html>
